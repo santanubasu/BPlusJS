@@ -4,7 +4,7 @@
 		<script src="anvesaka.js" type="text/javascript"></script>
 		<script src="bplus.js" type="text/javascript"></script>
 		<script type="text/javascript">
-			var btree = new com.anvesaka.jdao.BTree({
+			var btree = new com.anvesaka.bplus.BTree({
 				order:6,
 				mergeThreshold:2
 			});
@@ -34,7 +34,7 @@
 			});
 			range = btree.range(0, 1000);
 
-			var btree = new com.anvesaka.jdao.BTree({
+			var btree = new com.anvesaka.bplus.BTree({
 				order:100,
 				mergeThreshold:40
 			});
