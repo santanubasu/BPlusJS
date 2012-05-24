@@ -1,4 +1,4 @@
-$.namespace("com.anvesaka.jdao").BTreeNode = Class.extend({
+$.namespace("com.anvesaka.bplus").BTreeNode = Class.extend({
 	init:function(options) {
 		options = $.extend(true, {
 			order:100,
@@ -35,7 +35,7 @@ $.namespace("com.anvesaka.jdao").BTreeNode = Class.extend({
 	}
 });
 
-$.namespace("com.anvesaka.jdao").BTreeInternalNode = com.anvesaka.jdao.BTreeNode.extend({
+$.namespace("com.anvesaka.bplus").BTreeInternalNode = com.anvesaka.bplus.BTreeNode.extend({
 	init:function(options) {
 		options = $.extend(true, {
 		}, options);
@@ -126,13 +126,13 @@ $.namespace("com.anvesaka.jdao").BTreeInternalNode = com.anvesaka.jdao.BTreeNode
 			return [];
 		}
 		var splitIndex = Math.floor(this._private.data.length/2);
-		var leftNode = new com.anvesaka.jdao.BTreeInternalNode({
+		var leftNode = new com.anvesaka.bplus.BTreeInternalNode({
 			data:this._private.data.slice(0, splitIndex),
 			leftPeer:this._private.leftPeer,
 			order:this._private.order,
 			mergeThreshold:this._private.mergeThreshold,
 		});
-		var rightNode = new com.anvesaka.jdao.BTreeInternalNode({
+		var rightNode = new com.anvesaka.bplus.BTreeInternalNode({
 			data:this._private.data.slice(splitIndex+1, this._private.data.length),
 			rightPeer:this._private.rightPeer,
 			order:this._private.order,
@@ -257,7 +257,7 @@ $.namespace("com.anvesaka.jdao").BTreeInternalNode = com.anvesaka.jdao.BTreeNode
 		else {
 			var mergedInternalNode;
 			if ($.isNotDefined(leftData)) {
-				mergedInternalNode = new com.anvesaka.jdao.BTreeInternalNode({
+				mergedInternalNode = new com.anvesaka.bplus.BTreeInternalNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:this._private.data.concat([{
@@ -279,7 +279,7 @@ $.namespace("com.anvesaka.jdao").BTreeInternalNode = com.anvesaka.jdao.BTreeNode
 				}
 			} 
 			else if ($.isNotDefined(rightData)) {
-				mergedInternalNode = new com.anvesaka.jdao.BTreeInternalNode({
+				mergedInternalNode = new com.anvesaka.bplus.BTreeInternalNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:leftData.concat([{
@@ -301,7 +301,7 @@ $.namespace("com.anvesaka.jdao").BTreeInternalNode = com.anvesaka.jdao.BTreeNode
 				}
 			}
 			else if (rightData.length<leftData.length) {
-				mergedInternalNode = new com.anvesaka.jdao.BTreeInternalNode({
+				mergedInternalNode = new com.anvesaka.bplus.BTreeInternalNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:this._private.data.concat([{
@@ -323,7 +323,7 @@ $.namespace("com.anvesaka.jdao").BTreeInternalNode = com.anvesaka.jdao.BTreeNode
 				}
 			}
 			else {
-				mergedInternalNode = new com.anvesaka.jdao.BTreeInternalNode({
+				mergedInternalNode = new com.anvesaka.bplus.BTreeInternalNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:leftData.concat([{
@@ -360,7 +360,7 @@ $.namespace("com.anvesaka.jdao").BTreeInternalNode = com.anvesaka.jdao.BTreeNode
 	}
 });
 
-$.namespace("com.anvesaka.jdao").BTreeLeafNode = com.anvesaka.jdao.BTreeNode.extend({
+$.namespace("com.anvesaka.bplus").BTreeLeafNode = com.anvesaka.bplus.BTreeNode.extend({
 	init:function(options) {
 		options = $.extend(true, {
 		}, options);
@@ -427,13 +427,13 @@ $.namespace("com.anvesaka.jdao").BTreeLeafNode = com.anvesaka.jdao.BTreeNode.ext
 			return [];
 		}
 		var splitIndex = Math.floor(this._private.data.length/2);
-		var leftNode = new com.anvesaka.jdao.BTreeLeafNode({
+		var leftNode = new com.anvesaka.bplus.BTreeLeafNode({
 			data:this._private.data.slice(0, splitIndex),
 			leftPeer:this._private.leftPeer,
 			order:this._private.order,
 			mergeThreshold:this._private.mergeThreshold,
 		});
-		var rightNode = new com.anvesaka.jdao.BTreeLeafNode({
+		var rightNode = new com.anvesaka.bplus.BTreeLeafNode({
 			data:this._private.data.slice(splitIndex, this._private.data.length),
 			rightPeer:this._private.rightPeer,
 			order:this._private.order,
@@ -502,7 +502,7 @@ $.namespace("com.anvesaka.jdao").BTreeLeafNode = com.anvesaka.jdao.BTreeNode.ext
 		else {
 			var mergedLeafNode;
 			if ($.isNotDefined(leftData)) {
-				mergedLeafNode = new com.anvesaka.jdao.BTreeLeafNode({
+				mergedLeafNode = new com.anvesaka.bplus.BTreeLeafNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:this._private.data.concat(rightData)
@@ -520,7 +520,7 @@ $.namespace("com.anvesaka.jdao").BTreeLeafNode = com.anvesaka.jdao.BTreeNode.ext
 				}
 			} 
 			else if ($.isNotDefined(rightData)) {
-				mergedLeafNode = new com.anvesaka.jdao.BTreeLeafNode({
+				mergedLeafNode = new com.anvesaka.bplus.BTreeLeafNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:leftData.concat(this._private.data)
@@ -538,7 +538,7 @@ $.namespace("com.anvesaka.jdao").BTreeLeafNode = com.anvesaka.jdao.BTreeNode.ext
 				}
 			}
 			else if (rightData.length<leftData.length) {
-				mergedLeafNode = new com.anvesaka.jdao.BTreeLeafNode({
+				mergedLeafNode = new com.anvesaka.bplus.BTreeLeafNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:this._private.data.concat(rightData)
@@ -556,7 +556,7 @@ $.namespace("com.anvesaka.jdao").BTreeLeafNode = com.anvesaka.jdao.BTreeNode.ext
 				}
 			}
 			else {
-				mergedLeafNode = new com.anvesaka.jdao.BTreeLeafNode({
+				mergedLeafNode = new com.anvesaka.bplus.BTreeLeafNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:leftData.concat(this._private.data)
@@ -609,14 +609,14 @@ $.namespace("com.anvesaka.jdao").BTreeLeafNode = com.anvesaka.jdao.BTreeNode.ext
 	}
 });
 
-$.namespace("com.anvesaka.jdao").BTree = Class.extend({
+$.namespace("com.anvesaka.bplus").BTree = Class.extend({
 	init:function(options) {
 		options = $.extend(true, {
 			order:100,
 			mergeThreshold:40
 		}, options);
 		this._private = options;
-		this._private.root = new com.anvesaka.jdao.BTreeLeafNode({
+		this._private.root = new com.anvesaka.bplus.BTreeLeafNode({
 			order:this._private.order,
 			mergeThreshold:this._private.mergeThreshold,
 			data:[]
@@ -633,7 +633,7 @@ $.namespace("com.anvesaka.jdao").BTree = Class.extend({
 		 * the new nodes respectively.  The new root is implicitly an internal node.
 		 */
 		if (newNodes.length==3) {
-			this._private.root = new com.anvesaka.jdao.BTreeInternalNode({
+			this._private.root = new com.anvesaka.bplus.BTreeInternalNode({
 				order:this._private.order,
 				mergeThreshold:this._private.mergeThreshold,
 				data:[{
