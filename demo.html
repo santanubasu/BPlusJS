@@ -1,10 +1,10 @@
 <html>
 	<head>
-		<script src="jquery-1.6.js" type="text/javascript"></script>
-		<script src="common.js" type="text/javascript"></script>
+		<script src="../CommonJavascript/jquery-1.6.js" type="text/javascript"></script>
+		<script src="../CommonJavascript/common.js" type="text/javascript"></script>
 		<script src="bplus.js" type="text/javascript"></script>
 		<script type="text/javascript">
-			var btree = new com.anvesaka.bplus.BTree({
+			var bplusTree = new com.anvesaka.bplus.BPlusTree({
 				order:6,
 				mergeThreshold:2
 			});
@@ -22,19 +22,19 @@
 			val = 0;
 			for (var i=0; i<100; i++) {
 				$.log($.LOG_INFO, "Adding "+val);
-				btree.insert(val, val);
-				$.log($.LOG_INFO, btree.toString());
+				bplusTree.insert(val, val);
+				$.log($.LOG_INFO, bplusTree.toString());
 				val+=getRandomInt(1, 10);
 			}
-			range = btree.range(0, 1000);
+			range = bplusTree.range(0, 1000);
 			range.forEach(function(item) {
 				$.log($.LOG_INFO, "Removing "+item.key);
-				btree.remove(item.key);
-				$.log($.LOG_INFO, btree.toString());
+				bplusTree.remove(item.key);
+				$.log($.LOG_INFO, bplusTree.toString());
 			});
-			range = btree.range(0, 1000);
+			range = bplusTree.range(0, 1000);
 
-			var btree = new com.anvesaka.bplus.BTree({
+			var bplusTree = new com.anvesaka.bplus.BPlusTree({
 				order:100,
 				mergeThreshold:40
 			});
@@ -51,32 +51,32 @@
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
 				val = getRandomInt(0, 1000000);
-				btree.insert("key"+val, "val"+val);
+				bplusTree.insert("key"+val, "val"+val);
 			}
 			end = new Date().getTime();	
 			$.log($.LOG_INFO, "Insertion: "+(end-start));
 			
-			range = btree.range(100000, 200000);
+			range = bplusTree.range(100000, 200000);
 
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
 				val = getRandomInt(0, 1000000);
-				btree.remove("key"+val);
+				bplusTree.remove("key"+val);
 			}
 			end = new Date().getTime();	
 			$.log($.LOG_INFO, "Removal: "+(end-start));
 
-			range = btree.range(100000, 200000);
+			range = bplusTree.range(100000, 200000);
 
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
 				val = getRandomInt(0, 1000000);
-				btree.insert("key"+val, "val"+val);
+				bplusTree.insert("key"+val, "val"+val);
 			}
 			end = new Date().getTime();	
 			$.log($.LOG_INFO, "Insertion: "+(end-start));
 
-			range = btree.range(100000, 200000);
+			range = bplusTree.range(100000, 200000);
 		</script>
 	</head>
 	<body>

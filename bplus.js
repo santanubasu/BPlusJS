@@ -1,4 +1,4 @@
-$.namespace("com.anvesaka.bplus").BTreeNode = Class.extend({
+$.namespace("com.anvesaka.bplus").BPlusTreeNode = Class.extend({
 	init:function(options) {
 		options = $.extend(true, {
 			order:100,
@@ -35,7 +35,7 @@ $.namespace("com.anvesaka.bplus").BTreeNode = Class.extend({
 	}
 });
 
-$.namespace("com.anvesaka.bplus").BTreeInternalNode = com.anvesaka.bplus.BTreeNode.extend({
+$.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPlusTreeNode.extend({
 	init:function(options) {
 		options = $.extend(true, {
 		}, options);
@@ -126,13 +126,13 @@ $.namespace("com.anvesaka.bplus").BTreeInternalNode = com.anvesaka.bplus.BTreeNo
 			return [];
 		}
 		var splitIndex = Math.floor(this._private.data.length/2);
-		var leftNode = new com.anvesaka.bplus.BTreeInternalNode({
+		var leftNode = new com.anvesaka.bplus.BPlusTreeInternalNode({
 			data:this._private.data.slice(0, splitIndex),
 			leftPeer:this._private.leftPeer,
 			order:this._private.order,
 			mergeThreshold:this._private.mergeThreshold,
 		});
-		var rightNode = new com.anvesaka.bplus.BTreeInternalNode({
+		var rightNode = new com.anvesaka.bplus.BPlusTreeInternalNode({
 			data:this._private.data.slice(splitIndex+1, this._private.data.length),
 			rightPeer:this._private.rightPeer,
 			order:this._private.order,
@@ -257,7 +257,7 @@ $.namespace("com.anvesaka.bplus").BTreeInternalNode = com.anvesaka.bplus.BTreeNo
 		else {
 			var mergedInternalNode;
 			if ($.isNotDefined(leftData)) {
-				mergedInternalNode = new com.anvesaka.bplus.BTreeInternalNode({
+				mergedInternalNode = new com.anvesaka.bplus.BPlusTreeInternalNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:this._private.data.concat([{
@@ -279,7 +279,7 @@ $.namespace("com.anvesaka.bplus").BTreeInternalNode = com.anvesaka.bplus.BTreeNo
 				}
 			} 
 			else if ($.isNotDefined(rightData)) {
-				mergedInternalNode = new com.anvesaka.bplus.BTreeInternalNode({
+				mergedInternalNode = new com.anvesaka.bplus.BPlusTreeInternalNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:leftData.concat([{
@@ -301,7 +301,7 @@ $.namespace("com.anvesaka.bplus").BTreeInternalNode = com.anvesaka.bplus.BTreeNo
 				}
 			}
 			else if (rightData.length<leftData.length) {
-				mergedInternalNode = new com.anvesaka.bplus.BTreeInternalNode({
+				mergedInternalNode = new com.anvesaka.bplus.BPlusTreeInternalNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:this._private.data.concat([{
@@ -323,7 +323,7 @@ $.namespace("com.anvesaka.bplus").BTreeInternalNode = com.anvesaka.bplus.BTreeNo
 				}
 			}
 			else {
-				mergedInternalNode = new com.anvesaka.bplus.BTreeInternalNode({
+				mergedInternalNode = new com.anvesaka.bplus.BPlusTreeInternalNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:leftData.concat([{
@@ -360,7 +360,7 @@ $.namespace("com.anvesaka.bplus").BTreeInternalNode = com.anvesaka.bplus.BTreeNo
 	}
 });
 
-$.namespace("com.anvesaka.bplus").BTreeLeafNode = com.anvesaka.bplus.BTreeNode.extend({
+$.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTreeNode.extend({
 	init:function(options) {
 		options = $.extend(true, {
 		}, options);
@@ -427,13 +427,13 @@ $.namespace("com.anvesaka.bplus").BTreeLeafNode = com.anvesaka.bplus.BTreeNode.e
 			return [];
 		}
 		var splitIndex = Math.floor(this._private.data.length/2);
-		var leftNode = new com.anvesaka.bplus.BTreeLeafNode({
+		var leftNode = new com.anvesaka.bplus.BPlusTreeLeafNode({
 			data:this._private.data.slice(0, splitIndex),
 			leftPeer:this._private.leftPeer,
 			order:this._private.order,
 			mergeThreshold:this._private.mergeThreshold,
 		});
-		var rightNode = new com.anvesaka.bplus.BTreeLeafNode({
+		var rightNode = new com.anvesaka.bplus.BPlusTreeLeafNode({
 			data:this._private.data.slice(splitIndex, this._private.data.length),
 			rightPeer:this._private.rightPeer,
 			order:this._private.order,
@@ -502,7 +502,7 @@ $.namespace("com.anvesaka.bplus").BTreeLeafNode = com.anvesaka.bplus.BTreeNode.e
 		else {
 			var mergedLeafNode;
 			if ($.isNotDefined(leftData)) {
-				mergedLeafNode = new com.anvesaka.bplus.BTreeLeafNode({
+				mergedLeafNode = new com.anvesaka.bplus.BPlusTreeLeafNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:this._private.data.concat(rightData)
@@ -520,7 +520,7 @@ $.namespace("com.anvesaka.bplus").BTreeLeafNode = com.anvesaka.bplus.BTreeNode.e
 				}
 			} 
 			else if ($.isNotDefined(rightData)) {
-				mergedLeafNode = new com.anvesaka.bplus.BTreeLeafNode({
+				mergedLeafNode = new com.anvesaka.bplus.BPlusTreeLeafNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:leftData.concat(this._private.data)
@@ -538,7 +538,7 @@ $.namespace("com.anvesaka.bplus").BTreeLeafNode = com.anvesaka.bplus.BTreeNode.e
 				}
 			}
 			else if (rightData.length<leftData.length) {
-				mergedLeafNode = new com.anvesaka.bplus.BTreeLeafNode({
+				mergedLeafNode = new com.anvesaka.bplus.BPlusTreeLeafNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:this._private.data.concat(rightData)
@@ -556,7 +556,7 @@ $.namespace("com.anvesaka.bplus").BTreeLeafNode = com.anvesaka.bplus.BTreeNode.e
 				}
 			}
 			else {
-				mergedLeafNode = new com.anvesaka.bplus.BTreeLeafNode({
+				mergedLeafNode = new com.anvesaka.bplus.BPlusTreeLeafNode({
 					order:this._private.order,
 					mergeThreshold:this._private.mergeThreshold,
 					data:leftData.concat(this._private.data)
@@ -609,14 +609,14 @@ $.namespace("com.anvesaka.bplus").BTreeLeafNode = com.anvesaka.bplus.BTreeNode.e
 	}
 });
 
-$.namespace("com.anvesaka.bplus").BTree = Class.extend({
+$.namespace("com.anvesaka.bplus").BPlusTree = Class.extend({
 	init:function(options) {
 		options = $.extend(true, {
 			order:100,
 			mergeThreshold:40
 		}, options);
 		this._private = options;
-		this._private.root = new com.anvesaka.bplus.BTreeLeafNode({
+		this._private.root = new com.anvesaka.bplus.BPlusTreeLeafNode({
 			order:this._private.order,
 			mergeThreshold:this._private.mergeThreshold,
 			data:[]
@@ -633,7 +633,7 @@ $.namespace("com.anvesaka.bplus").BTree = Class.extend({
 		 * the new nodes respectively.  The new root is implicitly an internal node.
 		 */
 		if (newNodes.length==3) {
-			this._private.root = new com.anvesaka.bplus.BTreeInternalNode({
+			this._private.root = new com.anvesaka.bplus.BPlusTreeInternalNode({
 				order:this._private.order,
 				mergeThreshold:this._private.mergeThreshold,
 				data:[{
