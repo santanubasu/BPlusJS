@@ -627,11 +627,6 @@ $.namespace("com.anvesaka.bplus").BPlusTree = Class.extend({
 	},
 	insert:function(key, value) {
 		var newNodes = this._private.root.insert(key, value);
-		/*
-		 * If a three element array is returned, it means the root has split into to, with roughly half of the children of the current root
-		 * falling under each new node.  Construct a new root that has a single data element, where the left and right child pointers point to
-		 * the new nodes respectively.  The new root is implicitly an internal node.
-		 */
 		if (newNodes.length==3) {
 			this._private.root = new com.anvesaka.bplus.BPlusTreeInternalNode({
 				order:this._private.order,
