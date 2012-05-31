@@ -1,11 +1,9 @@
 $.namespace("com.anvesaka.bplus").BPlusTreeNode = Class.extend({
 	init:function(options) {
-		options = $.extend(true, {
-			order:100,
-			mergeThreshold:40,
-			data:[]
-		}, options);
-		this._private = options;
+		this._private = {};
+		this._private.order = 100;
+		this._private.mergeThreshold = 40;
+		this._private.data = [];
 	},
 	getLeftPeer:function() {
 		return this._private.leftPeer;
@@ -37,26 +35,29 @@ $.namespace("com.anvesaka.bplus").BPlusTreeNode = Class.extend({
 
 $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPlusTreeNode.extend({
 	init:function(options) {
-		options = $.extend(true, {
-		}, options);
-		this._super(options);
-		var thiz = this;
+		this._super();
+		this._private.data = options.data;
+		this._private.mergeThreshold = options.mergeThreshold;
+		this._private.order = options.order;
+		this._private.leftPeer = options.leftPeer;
+		this._private.rightPeer = options.rightPeer;
 	},
 	findIndex:function(key) {
+		var data = this._private.data
 		var left = 0;
-		var right = this._private.data.length-1;
+		var right = data.length-1;
 		var mid = left+Math.floor((right-left)/2);
 		var found = false;
 		do {
 			mid = left+Math.floor((right-left)/2);
-			if (this._private.data[mid].key===key) {
-				found = true;
-			}
-			else if (this._private.data[mid].key<key) {
+			if (data[mid].key<key) {
 				left = mid+1;
 			}
-			else {
+			else if (data[mid].key>key) {
 				right = mid;
+			}
+			else {
+				found = true;
 			}
 		} while (left<right&&!found);
 		if (found) {
@@ -362,28 +363,30 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 
 $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTreeNode.extend({
 	init:function(options) {
-		options = $.extend(true, {
-		}, options);
-		this._super(options);
+		this._super();
+		this._private.data = options.data;
+		this._private.mergeThreshold = options.mergeThreshold;
+		this._private.order = options.order;
 	},
 	findIndex:function(key) {
-		if (this._private.data.length==0) {
+		var data = this._private.data;
+		if (data.length==0) {
 			return 0;
 		}
 		var left = 0;
-		var right = this._private.data.length;
+		var right = data.length;
 		var mid = left+Math.floor((right-left)/2);
 		var found = false;
 		do {
 			mid = left+Math.floor((right-left)/2);
-			if (this._private.data[mid].key===key) {
-				found = true;
-			}
-			else if (this._private.data[mid].key<key) {
+			if (data[mid].key<key) {
 				left = mid+1;
 			}
-			else {
+			else if (data[mid].key>key) {
 				right = mid;
+			}
+			else {
+				found = true;
 			}
 		} while (left!==right&&!found);
 		if (found) {
