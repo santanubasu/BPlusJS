@@ -154,16 +154,15 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 		var element = this._private.data[index];
 		var mergeIndex = -1;
 		var child;
-		var newNodes;
+		var retval;
 		if (element.key<=key) {
-			//$.log($.LOG_INFO, "Remove descending right via key "+element.key);
 			child = element.right;
-			newNodes = child.remove(key, element.left, index<this._private.data.length-1?child.getRightPeer():undefined);
-			if (this._private.data.length==1&&newNodes.length==3) {
-				return [newNodes[2]];
+			retval = child.remove(key, element.left, index<this._private.data.length-1?child.getRightPeer():undefined);
+			if (this._private.data.length==1&&retval.length==4) {
+				return [retval[0], retval[3]];
 			}
-			if (newNodes.length>0) {
-				if (newNodes[0]==1) {
+			if (retval.length>1) {
+				if (retval[1]==1) {
 					mergeIndex = index+1;
 				}
 				else {
@@ -174,12 +173,12 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 		else {
 			//$.log($.LOG_INFO, "Remove descending left via key "+element.key);
 			child = element.left;
-			newNodes = child.remove(key, index>0?child.getLeftPeer():undefined, element.right);
-			if (this._private.data.length==1&&newNodes.length==3) {
-				return [newNodes[2]];
+			retval = child.remove(key, index>0?child.getLeftPeer():undefined, element.right);
+			if (this._private.data.length==1&&retval.length==4) {
+				return [retval[0], retval[3]];
 			}
-			if (newNodes.length>0) {
-				if (newNodes[0]==1) {
+			if (retval.length>1) {
+				if (retval[1]==1) {
 					mergeIndex = index;
 				}
 				else {
@@ -189,23 +188,23 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 		}
 		if (mergeIndex>=0) {
 			var mergeElement = this._private.data[mergeIndex];
-			if (newNodes.length==4) {
-				mergeElement.key = newNodes[2];
-				return [];
+			if (retval.length==5) {
+				mergeElement.key = retval[3];
+				return [retval[0]];
 			}
 			else {
 				if (mergeIndex>0) {
-					this._private.data[mergeIndex-1].right = newNodes[2];
+					this._private.data[mergeIndex-1].right = retval[3];
 				}
 				if (mergeIndex<this._private.data.length-1) {
-					this._private.data[mergeIndex+1].left = newNodes[2];
+					this._private.data[mergeIndex+1].left = retval[3];
 				}
 				this._private.data.splice(mergeIndex, 1);
-				return this.merge(leftMergeOption, rightMergeOption);
+				return [retval[0]].concat(this.merge(leftMergeOption, rightMergeOption));
 			}
 		}
 		else {
-			return [];
+			return [retval[0]];
 		}
 	},
 	merge:function(leftMergeOption, rightMergeOption) {
@@ -215,7 +214,7 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 		if ($.isNotDefined(leftMergeOption)&&$.isNotDefined(rightMergeOption)) {
 			return [];
 		}
-		var retVal = [];
+		var retval = [];
 		var deficit = true;
 		var leftSurplus = 0;
 		var leftData;
@@ -238,10 +237,10 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 				left:leftSurplusData[leftSurplusData.length-1].right,
 				right:this._private.data[0].left
 			}], this._private.data);
-			retVal[0] = -1
-			retVal[1] = leftMergeOption;
-			retVal[2] = leftSurplusData[0].key;
-			retVal[3] = this;
+			retval[0] = -1
+			retval[1] = leftMergeOption;
+			retval[2] = leftSurplusData[0].key;
+			retval[3] = this;
 		}
 		else if (rightSurplus>leftSurplus) {
 			var rightSurplusData = rightMergeOption.getLeftSurplusData();
@@ -250,10 +249,10 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 				left:this._private.data[this._private.data.length-1].right,
 				right:rightSurplusData[0].left
 			}], rightSurplusData.slice(0, rightSurplusData.length-1));
-			retVal[0] = 1
-			retVal[1] = this;
-			retVal[2] = rightSurplusData[rightSurplusData.length-1].key;
-			retVal[3] = rightMergeOption;
+			retval[0] = 1
+			retval[1] = this;
+			retval[2] = rightSurplusData[rightSurplusData.length-1].key;
+			retval[3] = rightMergeOption;
 		}
 		else {
 			var mergedInternalNode;
@@ -267,9 +266,9 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 						right:rightData[0].left
 					}], rightData)
 				});		
-				retVal[0] = 1;
-				retVal[1] = mergedInternalNode.getData()[0].key
-				retVal[2] = mergedInternalNode;
+				retval[0] = 1;
+				retval[1] = mergedInternalNode.getData()[0].key
+				retval[2] = mergedInternalNode;
 				if ($.isDefined(rightPeer)&&$.isDefined(rightPeer.getRightPeer())) {
 					rightPeer.getRightPeer().setLeftPeer(mergedInternalNode);
 					mergedInternalNode.setRightPeer(rightPeer.getRightPeer());
@@ -289,9 +288,9 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 						right:this._private.data[0].left
 					}], this._private.data)
 				});				
-				retVal[0] = -1;
-				retVal[1] = mergedInternalNode.getData()[0].key
-				retVal[2] = mergedInternalNode;
+				retval[0] = -1;
+				retval[1] = mergedInternalNode.getData()[0].key
+				retval[2] = mergedInternalNode;
 				if ($.isDefined(leftPeer)&&$.isDefined(leftPeer.getLeftPeer())) {
 					leftPeer.getLeftPeer().setRightPeer(mergedInternalNode);
 					mergedInternalNode.setLeftPeer(leftPeer.getLeftPeer());
@@ -311,9 +310,9 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 						right:rightData[0].left
 					}], rightData)
 				});				
-				retVal[0] = 1;
-				retVal[1] = mergedInternalNode.getData()[0].key
-				retVal[2] = mergedInternalNode;
+				retval[0] = 1;
+				retval[1] = mergedInternalNode.getData()[0].key
+				retval[2] = mergedInternalNode;
 				if ($.isDefined(rightPeer)&&$.isDefined(rightPeer.getRightPeer())) {
 					rightPeer.getRightPeer().setLeftPeer(mergedInternalNode);
 					mergedInternalNode.setRightPeer(rightPeer.getRightPeer());
@@ -333,9 +332,9 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 						right:this._private.data[0].left
 					}], this._private.data)
 				});				
-				retVal[0] = -1;
-				retVal[1] = mergedInternalNode.getData()[0].key
-				retVal[2] = mergedInternalNode;
+				retval[0] = -1;
+				retval[1] = mergedInternalNode.getData()[0].key
+				retval[2] = mergedInternalNode;
 				if ($.isDefined(leftPeer)&&$.isDefined(leftPeer.getLeftPeer())) {
 					leftPeer.getLeftPeer().setRightPeer(mergedInternalNode);
 					mergedInternalNode.setLeftPeer(leftPeer.getLeftPeer());
@@ -346,7 +345,7 @@ $.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.anvesaka.bplus.BPl
 				}
 			}
 		}
-		return retVal;
+		return retval;
 	},
 	find:function(key) {
 		return this.findChild(key).find(key);
@@ -367,6 +366,8 @@ $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTr
 		this._private.data = options.data;
 		this._private.mergeThreshold = options.mergeThreshold;
 		this._private.order = options.order;
+		this._private.leftPeer = options.leftPeer;
+		this._private.rightPeer = options.rightPeer;
 	},
 	findIndex:function(key) {
 		var data = this._private.data;
@@ -457,10 +458,10 @@ $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTr
 		var element = this._private.data[index];
 		if (index<this._private.data.length&&element.key===key) {
 			this._private.data.splice(index, 1);
-			return this.merge(leftMergeOption, rightMergeOption);
+			return [element.value].concat(this.merge(leftMergeOption, rightMergeOption));
 		}
 		else {
-			return [];
+			return [undefined];
 		}
 	},
 	merge:function(leftMergeOption, rightMergeOption) {
@@ -470,7 +471,7 @@ $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTr
 		if ($.isNotDefined(leftMergeOption)&&$.isNotDefined(rightMergeOption)) {
 			return [];
 		}
-		var retVal = [];
+		var retval = [];
 		var deficit = true;
 		var leftSurplus = 0;
 		var leftData;
@@ -489,18 +490,18 @@ $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTr
 		if (leftSurplus>rightSurplus) {
 			var leftSurplusData = leftMergeOption.getRightSurplusData();
 			this._private.data = leftSurplusData.concat(this._private.data);
-			retVal[0] = -1
-			retVal[1] = leftMergeOption;
-			retVal[2] = this._private.data[0].key;
-			retVal[3] = this;
+			retval[0] = -1
+			retval[1] = leftMergeOption;
+			retval[2] = this._private.data[0].key;
+			retval[3] = this;
 		}
 		else if (rightSurplus>leftSurplus) {
 			var rightSurplusData = rightMergeOption.getLeftSurplusData();
 			this._private.data = this._private.data.concat(rightSurplusData);
-			retVal[0] = 1
-			retVal[1] = this;
-			retVal[2] = rightMergeOption.getData()[0].key;
-			retVal[3] = rightMergeOption;
+			retval[0] = 1
+			retval[1] = this;
+			retval[2] = rightMergeOption.getData()[0].key;
+			retval[3] = rightMergeOption;
 		}
 		else {
 			var mergedLeafNode;
@@ -510,9 +511,9 @@ $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTr
 					mergeThreshold:this._private.mergeThreshold,
 					data:this._private.data.concat(rightData)
 				});		
-				retVal[0] = 1;
-				retVal[1] = mergedLeafNode.getData()[0].key
-				retVal[2] = mergedLeafNode;
+				retval[0] = 1;
+				retval[1] = mergedLeafNode.getData()[0].key
+				retval[2] = mergedLeafNode;
 				if ($.isDefined(rightPeer)&&$.isDefined(rightPeer.getRightPeer())) {
 					rightPeer.getRightPeer().setLeftPeer(mergedLeafNode);
 					mergedLeafNode.setRightPeer(rightPeer.getRightPeer());
@@ -528,9 +529,9 @@ $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTr
 					mergeThreshold:this._private.mergeThreshold,
 					data:leftData.concat(this._private.data)
 				});				
-				retVal[0] = -1;
-				retVal[1] = mergedLeafNode.getData()[0].key
-				retVal[2] = mergedLeafNode;
+				retval[0] = -1;
+				retval[1] = mergedLeafNode.getData()[0].key
+				retval[2] = mergedLeafNode;
 				if ($.isDefined(leftPeer)&&$.isDefined(leftPeer.getLeftPeer())) {
 					leftPeer.getLeftPeer().setRightPeer(mergedLeafNode);
 					mergedLeafNode.setLeftPeer(leftPeer.getLeftPeer());
@@ -546,9 +547,9 @@ $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTr
 					mergeThreshold:this._private.mergeThreshold,
 					data:this._private.data.concat(rightData)
 				});				
-				retVal[0] = 1;
-				retVal[1] = mergedLeafNode.getData()[0].key
-				retVal[2] = mergedLeafNode;
+				retval[0] = 1;
+				retval[1] = mergedLeafNode.getData()[0].key
+				retval[2] = mergedLeafNode;
 				if ($.isDefined(rightPeer)&&$.isDefined(rightPeer.getRightPeer())) {
 					rightPeer.getRightPeer().setLeftPeer(mergedLeafNode);
 					mergedLeafNode.setRightPeer(rightPeer.getRightPeer());
@@ -564,9 +565,9 @@ $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTr
 					mergeThreshold:this._private.mergeThreshold,
 					data:leftData.concat(this._private.data)
 				});				
-				retVal[0] = -1;
-				retVal[1] = mergedLeafNode.getData()[0].key
-				retVal[2] = mergedLeafNode;
+				retval[0] = -1;
+				retval[1] = mergedLeafNode.getData()[0].key
+				retval[2] = mergedLeafNode;
 				if ($.isDefined(leftPeer)&&$.isDefined(leftPeer.getLeftPeer())) {
 					leftPeer.getLeftPeer().setRightPeer(mergedLeafNode);
 					mergedLeafNode.setLeftPeer(leftPeer.getLeftPeer());
@@ -577,7 +578,7 @@ $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTr
 				}
 			}
 		}
-		return retVal;
+		return retval;
 	},
 	find:function(key) {
 		var index = this.findIndex(key);
@@ -592,9 +593,12 @@ $.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anvesaka.bplus.BPlusTr
 		while ($.isDefined(node)) {
 			var startIndex = node.findIndex(start);
 			var endIndex = node.findIndex(end);
+			range.length = range.length+(endIndex-startIndex);
 			var nodeData = node.getData();
 			if (startIndex<nodeData.length) {
-				range = range.concat(nodeData.slice(startIndex, endIndex));
+				for (var i=startIndex; i<endIndex; i++) {
+					range.push(nodeData[i]);
+				}
 			}
 			if (endIndex==nodeData.length) {
 				node = node.getRightPeer();
@@ -643,10 +647,11 @@ $.namespace("com.anvesaka.bplus").BPlusTree = Class.extend({
 		}
 	},
 	remove:function(key) {
-		var newNodes = this._private.root.remove(key);
-		if (newNodes.length==1) {
-			this._private.root = newNodes[0];
+		var retval = this._private.root.remove(key);
+		if (retval.length==2) {
+			this._private.root = retval[1];
 		}
+		return retval[0];
 	},
 	find:function(key) {
 		return this._private.root.find(key);

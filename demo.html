@@ -42,8 +42,7 @@
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
 				val = getRandomInt(0, 1000000);
-				key = "key"+val; 
-				val = "val"+val; 
+				key = val; 
 			}			
 			end = new Date().getTime();	
 			$.log($.LOG_INFO, "Random key generation: "+(end-start));
@@ -51,32 +50,52 @@
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
 				val = getRandomInt(0, 1000000);
-				bplusTree.insert("key"+val, "val"+val);
+				bplusTree.insert(val, val);
 			}
 			end = new Date().getTime();	
-			$.log($.LOG_INFO, "Insertion: "+(end-start));
+			$.log($.LOG_INFO, "Insertion of 500000 random elements: "+(end-start));
 			
-			range = bplusTree.range(100000, 200000);
+			start = new Date().getTime();
+			range = bplusTree.range(0, 1000000);
+			end = new Date().getTime();	
+			$.log($.LOG_INFO, "Range retrieval of all elements, returning "+range.length+" elements: "+(end-start));
+
+			var ordered = true;
+			for (var i=0; i<range.length-1; i++) {
+				if (range[i]>range[i+1]) {
+					ordered = false;
+					break;
+				}
+			}
+			$.log($.LOG_INFO, "Range ordered? "+ordered);
 
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
 				val = getRandomInt(0, 1000000);
-				bplusTree.remove("key"+val);
+				bplusTree.remove(val);
 			}
 			end = new Date().getTime();	
-			$.log($.LOG_INFO, "Removal: "+(end-start));
+			$.log($.LOG_INFO, "Removal of 500000 keys: "+(end-start));
 
+			start = new Date().getTime();	
 			range = bplusTree.range(100000, 200000);
+			end = new Date().getTime();	
+			$.log($.LOG_INFO, "Range retrieval of 100000 wide block, returning "+range.length+" elements: "+(end-start));
 
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
 				val = getRandomInt(0, 1000000);
-				bplusTree.insert("key"+val, "val"+val);
+				bplusTree.insert(val, val);
 			}
 			end = new Date().getTime();	
-			$.log($.LOG_INFO, "Insertion: "+(end-start));
+			$.log($.LOG_INFO, "Insertion of 500000 randome elements: "+(end-start));
 
+			start = new Date().getTime();	
 			range = bplusTree.range(100000, 200000);
+			end = new Date().getTime();	
+			$.log($.LOG_INFO, "Range retrieval of 100000 wide block, returning "+range.length+" elements: "+(end-start));
+			
+			
 		</script>
 	</head>
 	<body>
