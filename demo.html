@@ -1,6 +1,5 @@
 <html>
 	<head>
-		<script src="../CommonJavascript/jquery-1.6.js" type="text/javascript"></script>
 		<script src="../CommonJavascript/common.js" type="text/javascript"></script>
 		<script src="bplus.js" type="text/javascript"></script>
 		<script type="text/javascript">
@@ -21,16 +20,16 @@
 			
 			val = 0;
 			for (var i=0; i<100; i++) {
-				$.log($.LOG_INFO, "Adding "+val);
+				com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Adding "+val);
 				bplusTree.insert(val, val);
-				$.log($.LOG_INFO, bplusTree.toString());
+				com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, bplusTree.toString());
 				val+=getRandomInt(1, 10);
 			}
 			range = bplusTree.range(0, 1000);
 			range.forEach(function(item) {
-				$.log($.LOG_INFO, "Removing "+item.key);
+				com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Removing "+item.key);
 				bplusTree.remove(item.key);
-				$.log($.LOG_INFO, bplusTree.toString());
+				com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, bplusTree.toString());
 			});
 			range = bplusTree.range(0, 1000);
 
@@ -45,7 +44,7 @@
 				key = val; 
 			}			
 			end = new Date().getTime();	
-			$.log($.LOG_INFO, "Random key generation: "+(end-start));
+			com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Random key generation: "+(end-start));
 			
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
@@ -53,12 +52,12 @@
 				bplusTree.insert(val, val);
 			}
 			end = new Date().getTime();	
-			$.log($.LOG_INFO, "Insertion of 500000 random elements: "+(end-start));
+			com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Insertion of 500000 random elements: "+(end-start));
 			
 			start = new Date().getTime();
 			range = bplusTree.range(0, 1000000);
 			end = new Date().getTime();	
-			$.log($.LOG_INFO, "Range retrieval of all elements, returning "+range.length+" elements: "+(end-start));
+			com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Range retrieval of all elements, returning "+range.length+" elements: "+(end-start));
 
 			var ordered = true;
 			for (var i=0; i<range.length-1; i++) {
@@ -67,7 +66,7 @@
 					break;
 				}
 			}
-			$.log($.LOG_INFO, "Range ordered? "+ordered);
+			com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Range ordered? "+ordered);
 
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
@@ -75,12 +74,12 @@
 				bplusTree.remove(val);
 			}
 			end = new Date().getTime();	
-			$.log($.LOG_INFO, "Removal of 500000 keys: "+(end-start));
+			com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Removal of 500000 keys: "+(end-start));
 
 			start = new Date().getTime();	
 			range = bplusTree.range(100000, 200000);
 			end = new Date().getTime();	
-			$.log($.LOG_INFO, "Range retrieval of 100000 wide block, returning "+range.length+" elements: "+(end-start));
+			com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Range retrieval of 100000 wide block, returning "+range.length+" elements: "+(end-start));
 
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
@@ -88,12 +87,12 @@
 				bplusTree.insert(val, val);
 			}
 			end = new Date().getTime();	
-			$.log($.LOG_INFO, "Insertion of 500000 randome elements: "+(end-start));
+			com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Insertion of 500000 random elements: "+(end-start));
 
 			start = new Date().getTime();	
 			range = bplusTree.range(100000, 200000);
 			end = new Date().getTime();	
-			$.log($.LOG_INFO, "Range retrieval of 100000 wide block, returning "+range.length+" elements: "+(end-start));
+			com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Range retrieval of 100000 wide block, returning "+range.length+" elements: "+(end-start));
 			
 			
 		</script>
