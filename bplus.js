@@ -601,7 +601,7 @@ com.anvesaka.common.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anve
 			var nodeData = node.getData();
 			if (startIndex<nodeData.length) {
 				for (var i=startIndex; i<endIndex; i++) {
-					range.push(nodeData[i]);
+					range.push(nodeData[i].value);
 				}
 			}
 			if (endIndex==nodeData.length) {
