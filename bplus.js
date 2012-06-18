@@ -79,14 +79,14 @@ com.anvesaka.common.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.
 		}
 		return child;
 	},
-	insert:function(key, value) {
+	insert:function(key, value, clobber) {
 		var index = this.findIndex(key);
 		var element = this._private.data[index];
 		var child;
 		var newNodes;
 		if (element.key<=key) {
 			child = element.right;
-			newNodes = child.insert(key, value);
+			newNodes = child.insert(key, value, clobber);
 			if (newNodes.length==3) {
 				var leftElement = {
 					key:element.key,
@@ -104,7 +104,7 @@ com.anvesaka.common.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.
 		}
 		else {
 			child = element.left;
-			newNodes = child.insert(key, value);
+			newNodes = child.insert(key, value, clobber);
 			if (newNodes.length==3) {
 				var leftElement = {
 					key:newNodes[1],
@@ -120,7 +120,7 @@ com.anvesaka.common.namespace("com.anvesaka.bplus").BPlusTreeInternalNode = com.
 				return this.split();
 			}
 		}
-		return [];
+		return newNodes;
 	},
 	split:function() {
 		if (this._private.data.length<this._private.order) {
@@ -397,7 +397,7 @@ com.anvesaka.common.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anve
 			return left;
 		}
 	},
-	insert:function(key, value) {
+	insert:function(key, value, clobber) {
 		var index = this.findIndex(key);
 		var element = this._private.data[index];
 		if (index==this._private.data.length) {
@@ -407,7 +407,12 @@ com.anvesaka.common.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anve
 			});
 		}
 		else if (element.key===key) {
-			element.value = value;
+			if (clobber) {
+				element.value = value;
+			}
+			else {
+				return [element.value];
+			}
 		}
 		/*
 		 * This condition may never obtain, given the way findIndex is written
@@ -593,7 +598,6 @@ com.anvesaka.common.namespace("com.anvesaka.bplus").BPlusTreeLeafNode = com.anve
 		while (com.anvesaka.common.isDefined(node)) {
 			var startIndex = node.findIndex(start);
 			var endIndex = node.findIndex(end);
-			range.length = range.length+(endIndex-startIndex);
 			var nodeData = node.getData();
 			if (startIndex<nodeData.length) {
 				for (var i=startIndex; i<endIndex; i++) {
@@ -632,8 +636,8 @@ com.anvesaka.common.namespace("com.anvesaka.bplus").BPlusTree = Class.extend({
 	toString:function() {
 		return this._private.root.toString("");
 	},
-	insert:function(key, value) {
-		var newNodes = this._private.root.insert(key, value);
+	insert:function(key, value, clobber) {
+		var newNodes = this._private.root.insert(key, value, clobber);
 		if (newNodes.length==3) {
 			this._private.root = new com.anvesaka.bplus.BPlusTreeInternalNode({
 				order:this._private.order,
@@ -645,6 +649,10 @@ com.anvesaka.common.namespace("com.anvesaka.bplus").BPlusTree = Class.extend({
 				}]
 			});
 		}
+		else if (newNodes.length==1) {
+			return newNodes[0];
+		}
+		return value;
 	},
 	remove:function(key) {
 		var retval = this._private.root.remove(key);

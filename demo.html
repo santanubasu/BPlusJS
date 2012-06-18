@@ -26,6 +26,7 @@
 				val+=getRandomInt(1, 10);
 			}
 			range = bplusTree.range(0, 1000);
+			com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Range 0-1000 contains "+range.length+" values.");
 			range.forEach(function(item) {
 				com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Removing "+item.key);
 				bplusTree.remove(item.key);
@@ -71,7 +72,7 @@
 			start = new Date().getTime();
 			for (var i=0; i<500000; i++) {
 				val = getRandomInt(0, 1000000);
-				bplusTree.remove(val);
+				val = bplusTree.remove(val);
 			}
 			end = new Date().getTime();	
 			com.anvesaka.common.log(com.anvesaka.common.LOG_INFO, "Removal of 500000 keys: "+(end-start));
